@@ -1,12 +1,11 @@
 schema_version: 1
 
 context:
-  name: libsecret
   version: "0.21.7"
   major_minor: ${{ (version | split('.'))[0] }}.${{ (version | split('.'))[1] }}
 
 package:
-  name: ${{ name|lower }}
+  name: libsecret
   version: ${{ version }}
 
 source:
