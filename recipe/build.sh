@@ -66,8 +66,14 @@ meson setup builddir \
     ${MESON_ARGS}
 
 # vapigen from vala 0.56 chokes on the <doc:format/> element that
-# gobject-introspection >= 1.86 writes into the .gir file, so generate the
-# .gir first and strip that element before the vapi target consumes it.
+# gobject-introspection >= 1.86 writes into .gir files, so strip it from the
+# .gir files of our dependencies ...
+for gir_dir in "$PREFIX/share/gir-1.0" "$BUILD_PREFIX/share/gir-1.0"; do
+  [[ -d "$gir_dir" ]] || continue
+  find "$gir_dir" -name '*.gir' -exec sed -i '/<doc:format /d' {} +
+done
+
+# ... and from our own, which means generating it before the vapi target runs.
 ninja -C builddir -j${CPU_COUNT} libsecret/Secret-1.gir
 sed -i '/<doc:format /d' builddir/libsecret/Secret-1.gir
 
