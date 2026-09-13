@@ -32,6 +32,7 @@ EOF
     meson setup native-build \
         -Dgtk_doc=false \
         -Dmanpage=false \
+        -Dvapi=false \
         --wrap-mode=nofallback \
         --default-library=shared \
         --prefix=$BUILD_PREFIX \
@@ -53,6 +54,12 @@ meson setup builddir \
     --wrap-mode=nofallback \
     --default-library=shared \
     ${MESON_ARGS}
+
+# vapigen from vala 0.56 chokes on the <doc:format/> element that
+# gobject-introspection >= 1.86 writes into the .gir file, so generate the
+# .gir first and strip that element before the vapi target consumes it.
+ninja -C builddir -j${CPU_COUNT} libsecret/Secret-1.gir
+sed -i '/<doc:format /d' builddir/libsecret/Secret-1.gir
 
 ninja -C builddir -j${CPU_COUNT}
 ninja -C builddir install -j${CPU_COUNT}

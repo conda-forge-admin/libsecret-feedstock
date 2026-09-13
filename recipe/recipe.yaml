@@ -29,6 +29,9 @@ requirements:
     - ninja
     - sed
     - vala
+    # g-ir-scanner runs under the build prefix python and imports distutils,
+    # which is only available through setuptools' shim.
+    - setuptools
     - if: build_platform != target_platform
       then: glib
     - if: build_platform != target_platform
