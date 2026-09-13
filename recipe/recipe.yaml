@@ -29,13 +29,13 @@ requirements:
     - ninja
     - sed
     - vala
-    # g-ir-scanner runs under the build prefix python and imports distutils,
-    # which is only available through setuptools' shim.
+    # g-ir-scanner has to run under the python it was built against, so take it
+    # from the build prefix rather than from the host gobject-introspection.
+    - g-ir-build-tools
+    # g-ir-scanner imports distutils, which is only available via setuptools.
     - setuptools
     - if: build_platform != target_platform
       then: glib
-    - if: build_platform != target_platform
-      then: g-ir-build-tools
     - if: build_platform != target_platform
       then: libgcrypt
     - if: build_platform != target_platform
