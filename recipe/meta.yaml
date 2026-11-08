@@ -13,7 +13,7 @@ source:
     - 0001-Disable-mock_service-introspection.patch
 
 build:
-  number: 0
+  number: 1
   skip: true  # [win]
   run_exports:
     #  https://abi-laboratory.pro/tracker/timeline/libsecret/
@@ -23,12 +23,14 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ stdlib('c') }}
-    - pkg-config
+    - pkgconf
     - gettext-tools
     - meson
     - ninja
     - sed
     - vala
+    # g-ir-scanner imports distutils, which setuptools 84 no longer provides
+    - setuptools <84
     - glib                   # [build_platform != target_platform]
     - g-ir-build-tools       # [build_platform != target_platform]
     - libgcrypt              # [build_platform != target_platform]
@@ -36,6 +38,7 @@ requirements:
   host:
     - glib
     - gobject-introspection
+    - setuptools <84  # see build section
     - libgcrypt
     - libintl-devel  # [osx]
     - zlib
