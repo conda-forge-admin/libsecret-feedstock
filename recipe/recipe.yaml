@@ -31,13 +31,11 @@ requirements:
     # g-ir-scanner imports distutils, which setuptools 84 no longer provides
     - setuptools <84
     - if: build_platform != target_platform
-      then: glib
-    - if: build_platform != target_platform
-      then: g-ir-build-tools
-    - if: build_platform != target_platform
-      then: libgcrypt
-    - if: build_platform != target_platform
-      then: gobject-introspection
+      then:
+        - glib
+        - g-ir-build-tools
+        - libgcrypt
+        - gobject-introspection
   host:
     - glib
     - gobject-introspection
@@ -50,10 +48,12 @@ requirements:
     - ${{ pin_subpackage('libsecret', upper_bound='x.x') }}
 
 tests:
-  - script:
-      - test -f $PREFIX/lib/libsecret-1$SHLIB_EXT
-      - test -f $PREFIX/lib/pkgconfig/libsecret-1.pc
-      - test -f $PREFIX/lib/girepository-1.0/Secret-1.typelib
+  - package_contents:
+      lib:
+        - secret-1
+      files:
+        - lib/pkgconfig/libsecret-1.pc
+        - lib/girepository-1.0/Secret-1.typelib
 
 about:
   license: LGPL-2.1-or-later
