@@ -1,0 +1,75 @@
+schema_version: 1
+
+context:
+  name: libsecret
+  version: "0.21.8"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: http://ftp.gnome.org/pub/gnome/sources/libsecret/${{ '.'.join(version | split('.')[:2]) }}/libsecret-${{ version }}.tar.xz
+  sha256: 70e7279ccc7e8cce1bb0e1c57a3785e2c79aea6d1dd9a538abda3886f11cdf72
+  patches:
+    # Disable test-only introspection data, doesn't build on osx.
+    - 0001-Disable-mock_service-introspection.patch
+
+build:
+  number: 1
+  skip: win
+
+requirements:
+  build:
+    - ${{ compiler('c') }}
+    - ${{ stdlib('c') }}
+    - pkgconf
+    - gettext-tools
+    - meson
+    - ninja
+    - sed
+    - vala
+    # g-ir-scanner imports distutils, which setuptools 84 no longer provides
+    - setuptools <84
+    - if: build_platform != target_platform
+      then: glib
+    - if: build_platform != target_platform
+      then: g-ir-build-tools
+    - if: build_platform != target_platform
+      then: libgcrypt
+    - if: build_platform != target_platform
+      then: gobject-introspection
+  host:
+    - glib
+    - gobject-introspection
+    - setuptools <84  # see build section
+    - libgcrypt
+    - if: osx
+      then: libintl-devel
+    - zlib
+  run_exports:
+    - ${{ pin_subpackage('libsecret', upper_bound='x.x') }}
+
+tests:
+  - script:
+      - test -f $PREFIX/lib/libsecret-1$SHLIB_EXT
+      - test -f $PREFIX/lib/pkgconfig/libsecret-1.pc
+      - test -f $PREFIX/lib/girepository-1.0/Secret-1.typelib
+
+about:
+  license: LGPL-2.1-or-later
+  license_file: COPYING
+  summary: GObject based library for accessing the Secret Service API.
+  description: |
+    libsecret is a library for storing and retrieving passwords and other
+    secrets. It communicates with the "Secret Service" using D-Bus.
+    gnome-keyring and ksecretservice are both implementations of a Secret
+    Service. libsecret replaces libgnome-keyring.
+  homepage: https://wiki.gnome.org/Projects/Libsecret
+  repository: https://git.gnome.org/browse/libsecret/
+  documentation: https://developer.gnome.org/libsecret/
+
+extra:
+  recipe-maintainers:
+    - nehaljwani
+    - pavelzw
