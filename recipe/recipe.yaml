@@ -5,11 +5,11 @@ context:
   version: "0.21.8"
 
 package:
-  name: ${{ name|lower }}
+  name: ${{ name }}
   version: ${{ version }}
 
 source:
-  url: http://ftp.gnome.org/pub/gnome/sources/libsecret/${{ '.'.join(version | split('.')[:2]) }}/libsecret-${{ version }}.tar.xz
+  url: http://ftp.gnome.org/pub/gnome/sources/libsecret/${{ (version | split('.'))[:2] | join('.') }}/libsecret-${{ version }}.tar.xz
   sha256: 70e7279ccc7e8cce1bb0e1c57a3785e2c79aea6d1dd9a538abda3886f11cdf72
   patches:
     # Disable test-only introspection data, doesn't build on osx.
